@@ -7,15 +7,18 @@ from aiogram.dispatcher.filters import Command, Text, ChatTypeFilter
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.types import ChatType
 
-from time import sleep
+
 import sqlite3
 kb_client = InlineKeyboardMarkup(row_width=2)
+kb_client.add(
+        InlineKeyboardButton("🇬🇧 English", callback_data='English'),
+        InlineKeyboardButton("🇷🇺 Русский", callback_data='Русский'),
+        InlineKeyboardButton("🇰🇿 Қазақша", callback_data='Қазақша')
+    )
 kb_client_RMENU = InlineKeyboardMarkup(row_width=1)
 kb_client_KMENU = InlineKeyboardMarkup(row_width=1)
 kb_client_EMENU = InlineKeyboardMarkup(row_width=1)
-kb_client_ = ReplyKeyboardMarkup(resize_keyboard=True)
-b1 = KeyboardButton("Выбрать другой язык / Басқа тілді тандау / Choose another language")
-kb_client_.add(b1)
+
 class LanguageMode(StatesGroup):
     LANG_CHOICE = State()  # Состояние для выбора языка
     ENGLISH_MODE = State()  # Состояние для режима английского языка
@@ -35,14 +38,11 @@ sql = db.cursor()
 async def start_command(message: types.Message, state: FSMContext):
     # Определение клавиатуры с кнопками
     
-    kb_client.add(
-        InlineKeyboardButton("🇬🇧 English", callback_data='English'),
-        InlineKeyboardButton("🇷🇺 Русский", callback_data='Русский'),
-        InlineKeyboardButton("🇰🇿 Қазақша", callback_data='Қазақша')
-    )
+    
 
     # Отправляем сообщение с выбором языка и клавиатурой
     await message.answer("Выберите язык общения:", reply_markup=kb_client)
+    
 
     # Переходим в состояние выбора языка
     await LanguageMode.LANG_CHOICE.set()
@@ -284,16 +284,10 @@ async def russian_mode(message: types.Message):
 
 @dp.message_handler(ChatTypeFilter('private'))
 async def handle_private_message(message: types.Message):
-    # Обработка сообщений в личных чатах
-    
-    kb_client.add(
-        InlineKeyboardButton("🇬🇧 English", callback_data='English'),
-        InlineKeyboardButton("🇷🇺 Русский", callback_data='Русский'),
-        InlineKeyboardButton("🇰🇿 Қазақша", callback_data='Қазақша')
-    )
-
+   
     # Отправляем сообщение с выбором языка и клавиатурой
-    await message.answer("Выберите язык общения:", reply_markup=kb_client)
+    await message.answer("Выберите язык общения:",  reply_markup=kb_client)
+    
 
     # Переходим в состояние выбора языка
     await LanguageMode.LANG_CHOICE.set()
